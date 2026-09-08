@@ -469,7 +469,7 @@ RUN mkdir -p /opt/data
 # here. Putting them in ENTRYPOINT too passes them twice, which breaks
 # main-wrapper's routing and drops the container into the interactive CLI.
 ENTRYPOINT [ "/opt/hermes/docker/entrypoint-dispatch.sh" ]
-CMD [ ]
+CMD [ "gateway", "run" ]
 
 # --- Achilles deploy override (raul0ligma/hermes-agent) -----------------------
 # Upstream leaves CMD empty, which routes main-wrapper.sh to the interactive
