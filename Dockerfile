@@ -427,7 +427,11 @@ COPY --chmod=0755 docker/entrypoint-dispatch.sh /opt/hermes/docker/entrypoint-di
 # every other consumer.
 ENV PATH="/opt/hermes/bin:/opt/hermes/.venv/bin:/opt/data/.local/bin:${PATH}"
 RUN mkdir -p /opt/data
-VOLUME [ "/opt/data" ]
+# VOLUME removed for Railway: the platform rejects the VOLUME directive and
+# manages persistence itself. A Railway Volume is attached at this same path
+# (/opt/data = HERMES_HOME), so behaviour is unchanged. `RUN mkdir -p /opt/data`
+# above still creates the mount point.
+# VOLUME [ "/opt/data" ]
 
 # The image ENTRYPOINT is a tiny dispatcher rather than `/init` directly.
 # When the image really owns PID 1 (normal Docker / Podman), the dispatcher
