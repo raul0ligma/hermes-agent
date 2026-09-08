@@ -465,12 +465,10 @@ RUN mkdir -p /opt/data
 # supervised PID-1 path and the non-PID-1 fallback path. Without the
 # wrapper-as-ENTRYPOINT, leading-dash args like `--version` would be
 # intercepted by /init's POSIX shell.
-# Achilles: the gateway subcommand is baked into ENTRYPOINT rather than CMD.
-# Railway does not reliably honour a Dockerfile CMD -- clearing its start
-# command made the container run the interactive CLI, which printed its
-# banner, found no TTY on stdin and exited. Putting the args here means the
-# gateway runs regardless of what Railway does with CMD or startCommand.
-ENTRYPOINT [ "/opt/hermes/docker/entrypoint-dispatch.sh", "gateway", "run" ]
+# Achilles: args come from Railway's startCommand ("gateway run"), NOT from
+# here. Putting them in ENTRYPOINT too passes them twice, which breaks
+# main-wrapper's routing and drops the container into the interactive CLI.
+ENTRYPOINT [ "/opt/hermes/docker/entrypoint-dispatch.sh" ]
 CMD [ ]
 
 # --- Achilles deploy override (raul0ligma/hermes-agent) -----------------------
