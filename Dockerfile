@@ -465,23 +465,8 @@ RUN mkdir -p /opt/data
 # supervised PID-1 path and the non-PID-1 fallback path. Without the
 # wrapper-as-ENTRYPOINT, leading-dash args like `--version` would be
 # intercepted by /init's POSIX shell.
-# Achilles: args come from Railway's startCommand ("gateway run"), NOT from
-# here. Putting them in ENTRYPOINT too passes them twice, which breaks
-# main-wrapper's routing and drops the container into the interactive CLI.
+# Achilles: exactly ONE CMD. A duplicate CMD later in this file silently
+# won and passed no args, dropping the container into the interactive CLI.
 ENTRYPOINT [ "/opt/hermes/docker/entrypoint-dispatch.sh" ]
 CMD [ "gateway", "run" ]
 
-# --- Achilles deploy override (raul0ligma/hermes-agent) -----------------------
-# Upstream leaves CMD empty, which routes main-wrapper.sh to the interactive
-# `hermes` CLI. A Railway service needs the long-running messaging gateway, the
-# same command docker-compose.yml uses for its `gateway` service.
-#
-# Set as CMD rather than a Railway "start command" on purpose: Railway wraps a
-# start command in `sh -c`, and main-wrapper.sh execs an executable first arg
-# directly, so `sh` would swallow the subcommand routing and never reach
-# `hermes gateway run`.
-#
-# The dashboard is deliberately NOT run here. It stores API keys and upstream
-# binds it to 127.0.0.1 for that reason; exposing it on a public host is the
-# exact surface that was targeted in the June 2026 campaign.
-CMD [ ]
